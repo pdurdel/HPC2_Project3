@@ -1,0 +1,50 @@
+# Configure GitHub for the HPC2 Project
+
+1. Log in to a computer in E44 using ssh.
+2. From your home directory, go to
+    ~/.ssh
+3. Copy the content of the file
+    id_rsa.pub
+4. On the GitHub project site pdurdel/HPC2, go to "Settings" on the menu bar.
+5. Go to Security -> Deploy keys.
+6. Click on "Add deploy key".
+7. Add a descriptive title.
+8. Paste the content of id_rsa.pub as the key.
+9. Mark "Allow write access".
+10. Click "Add key".
+11. In a directory of your choosing, run
+    git clone git@github.com:pdurdel/HPC2.git
+
+# Test GitHub
+
+1. In the cloned directory, create a small text file.
+2. Run 
+    git add <filename>
+3. Run
+    git status
+4. Run
+    git commit -m "<some commit message>"
+5. Run
+    git status
+6. Run
+    git push
+7. Run
+    git status
+8. Look on the GitHub project site if your file has been added.
+
+Note: "git status" is not necessary to run in between steps.
+
+# Important
+
+- We should try to avoid two people working at the same file at once.
+- Only add/commit/push source files.
+
+# Other Commands
+
+- Update local repository such that it is consistent with GitHub:
+    git pull
+- Undo "git add":
+    git reset
+- Jump to previous commit (i.e. undo committed changes):
+   git reset --hard HEAD~1
+- <list to be continued>
