@@ -70,7 +70,7 @@ u_D = @(location, state) u_dirichlet([location.x location.y], coords_circles(1, 
 model = createpde();
 
 geometryFromEdges(model, geom);
-mesh = generateMesh(model, 'hmax', hmax);
+mesh = generateMesh(model, 'hmax', hmax, 'GeometricOrder', 'linear');
 %{
 [p2, e2, t2] = meshToPet(mesh);
 figure(3)
@@ -78,7 +78,7 @@ pdegplot(model, 'EdgeLabels', 'on')
 %}
 
 applyBoundaryCondition(model, 'dirichlet', 'Edge', bdry_dirichlet_idx, 'u', u_D)
-applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann(:, 1), 'g', g)
+applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann(:, 1).', 'g', g)
 specifyCoefficients(model, m=0, d=0, c=1, a=0, f=f);
 
 u_sol_model = solvepde(model);
