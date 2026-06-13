@@ -31,14 +31,14 @@ hmax = 0.5;
 
 [p,e,t,geom] = get_mesh_from_points(coords, coords_circles, big_radii, small_radii, hmax);
 
-%figure(1)
-%pdegplot(geom, 'EdgeLabels', 'on', 'VertexLabels', 'on');
+figure(1)
+pdegplot(geom, 'EdgeLabels', 'on', 'VertexLabels', 'on');
 
 el = t(1:3,:)';
 c = p';
 
-%figure(2)
-%trisurf(el, c(:,1), c(:,2), 0.*c(:,2), 'edgecolor','k'), view(2)
+figure(2)
+trisurf(el, c(:,1), c(:,2), 0.*c(:,2), 'edgecolor','k'), view(2)
 
 
 %% b)
@@ -123,11 +123,11 @@ xlabel('s'), ylabel('u'); title('function evaluation');
 figure(6)
 plot(s, beta_grad_u, 'LineWidth', 2), grid on;
 xlabel('s'), ylabel('\beta \cdot \nabla u');
-title('directionla derivation');
+title('directional derivation');
 
 figure(7)
 pdeplot(model, 'XYData', u_sol), hold on;
-plot(line_points(:,1), line_points(:,2), 'r-', 'LineWidth', 2)
+plot(line_points(:,1), line_points(:,2), 'b-', 'LineWidth', 2)
 plot(V(1), V(2), 'ko', 'MarkerFaceColor', 'k')
 plot(W(1), W(2), 'ko', 'MarkerFaceColor', 'k')
 text(V(1), V(2), ' V')
