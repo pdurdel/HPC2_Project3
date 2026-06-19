@@ -12,7 +12,7 @@ function vals = artificial_point_eval(points, elements, u, line_points)
     % all valid points
     valid = ~isnan(elem_id);
 
-    % getting the knotindices of the corresponding traiangle of the
+    % getting the knotindices of the corresponding triangle of the
     % point
     tri = elements(elem_id(valid),:);
  
