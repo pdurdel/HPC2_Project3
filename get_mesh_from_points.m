@@ -93,4 +93,7 @@ end
 
 [p,e,t] = initmesh(geom, 'hmax', hmax);
 
+t = t(1:3,:)';
+p = p';
+
 end
