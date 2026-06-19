@@ -1,5 +1,5 @@
 function rand_points = artificial_point_rand(points, elements, n_points)
-    % func for radnom points on the grid
+    % func for random points on the grid
 
     % coords of the knot vertices
     p1 = points(elements(:,1),:);
