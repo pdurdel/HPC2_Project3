@@ -2,6 +2,7 @@
 clear; close all; clc
 t_start = tic;
 warning('off','all')
+addpath('functions')
 
 %% user input
 
@@ -149,7 +150,8 @@ random_points = artificial_point_rand(mesh_points_snap, ...
 u_random = artificial_point_eval(mesh_points_snap, ...
     mesh_elements_snap, u_sol_snap, random_points);
 
-
+runtime = toc(t_start);
+fprintf('\nruntime: %.6f sec\n', runtime);
 
 %% Plots
 
@@ -320,3 +322,26 @@ hrot.Enable = 'on';
 
 exportgraphics(gcf, fullfile(out_dir, "09_random_points.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "09_random_points.fig"));
+
+%% print result tables
+
+fprintf('\n\n================ LINE INTEGRAL VALUES ================\n\n');
+
+% table for all line integral values
+line_integral_table = array2table(I_u, ...
+    'VariableNames', cellstr("n_line_" + string(n_line)), ...
+    'RowNames', cellstr("hmax_" + string(hmax)));
+
+disp(line_integral_table);
+
+
+fprintf('\n\n================ RANDOM POINT EVALUATION ================\n\n');
+
+% table for random point coordinates and evaluated values
+random_point_table = table( ...
+    random_points(:,1), ...
+    random_points(:,2), ...
+    u_random, ...
+    'VariableNames', {'x', 'y', 'u_value'});
+
+disp(random_point_table);
