@@ -6,7 +6,7 @@ warning('off','all')
 %% user input
 
 % hmax = [1, 1/2, 1/4, 1/8, 1/16, 1/32];
-hmax = [1, 1/2, 1/4, 1/8];
+hmax = [1, 1/2, 1/4, 1/8, 1/16];
 
 % blue line VW
 
@@ -50,7 +50,7 @@ for i = 1:length(hmax)
     % e: edges
     % t: elements
     
-    [p, e, t, geom] = get_mesh_from_points(coords, coords_circles, big_radii, small_radii, hmax(i));
+    [p, e, t, geom] = get_geometry(coords, coords_circles, big_radii, small_radii, hmax(i));
     
 
     %% function handles
@@ -62,7 +62,7 @@ for i = 1:length(hmax)
 
     %% boundary conditions
     
-    [bdry_dirichlet_idx, bdry_neumann] = define_boundary_conditions(e);
+    [bdry_dirichlet_idx, bdry_dirichlet, bdry_neumann_idx, bdry_neumann] = define_boundary_conditions(e);
     
     
     %% solve Poisson problem
@@ -72,9 +72,8 @@ for i = 1:length(hmax)
     geometryFromEdges(model, geom);
     mesh = generateMesh(model, 'hmax', hmax(i), 'GeometricOrder', 'linear');
     
-    
     applyBoundaryCondition(model, 'dirichlet', 'Edge', bdry_dirichlet_idx, 'u', u_D);
-    applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann(:, 1).', 'g', g);
+    applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann_idx, 'g', g);
     specifyCoefficients(model, m=0, d=0, c=1, a=0, f=f);
     
     u_sol_model = solvepde(model);
@@ -122,6 +121,8 @@ for i = 1:length(hmax)
             geom_snap = geom;
             p_snap = p;
             t_snap = t;
+            bdry_dirichlet_snap = bdry_dirichlet;
+            bdry_neumann_snap = bdry_neumann;
             model_snap = model;
             u_sol_snap = u_sol;
             s_snap = s;
@@ -149,8 +150,7 @@ u_random = artificial_point_eval(mesh_points_snap, ...
     mesh_elements_snap, u_sol_snap, random_points);
 
 
-runtime = toc(t_start);
-fprintf('\nruntime: %.6f sec\n', runtime);
+
 %% Plots
 
 % output folder
@@ -170,32 +170,37 @@ title('PDE Model Geometry')
 exportgraphics(gcf, fullfile(out_dir, "01_model_geometry.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "01_model_geometry.fig"));
 
-
 %% tractor mesh
 
 figure(2)
-trisurf(t_snap, p_snap(:,1), p_snap(:,2), 0.*p_snap(:,2), ...
-    'edgecolor', 'k'), view(2)
+p1 = trisurf(t_snap, p_snap(:,1), p_snap(:,2), 0.*p_snap(:,2), ...
+    'edgecolor', 'k');
+hold on
+p2 = plot(reshape(p_snap(bdry_dirichlet_snap(:, 2:3),1),[],2)', ...
+reshape(p_snap(bdry_dirichlet_snap(:, 2:3),2),[],2)','b', 'LineWidth', 3);
+p3 = plot(reshape(p_snap(bdry_neumann_snap(:, 2:3),1),[],2)', ...
+reshape(p_snap(bdry_neumann_snap(:, 2:3),2),[],2)','r', 'LineWidth', 3);
+view(2)
 xlabel('x'), ylabel('y')
 axis equal
+legend([p1(1), p2(1), p3(1)], 'Mesh', 'Dirichlet Boundary', 'Von Neumann Boundary')
 title('Triangular Mesh')
 
 exportgraphics(gcf, fullfile(out_dir, "02_triangular_mesh.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "02_triangular_mesh.fig"));
 
-
 %% 3d FEM solution
 
 figure(3)
-
 pdeplot(model_snap, 'XYData', u_sol_snap, 'ZData', u_sol_snap)
+colormap(turbo)
+colorbar
 grid on
 xlabel('x'), ylabel('y'), zlabel('u')
 title('FEM Solution u')
 
 exportgraphics(gcf, fullfile(out_dir, "03_fem_solution_3d.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "03_fem_solution_3d.fig"));
-
 
 %% line points evaluation
 
@@ -207,7 +212,6 @@ title('Function Evaluation along the Line')
 exportgraphics(gcf, fullfile(out_dir, "04_line_evaluation.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "04_line_evaluation.fig"));
 
-
 %% directional derivative along the line
 
 figure(5)
@@ -217,8 +221,6 @@ title('Directional Derivative along the Line')
 
 exportgraphics(gcf, fullfile(out_dir, "05_directional_derivative.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "05_directional_derivative.fig"));
-
-
 %% PDE solution with displayed line
 
 figure(6)
@@ -237,7 +239,6 @@ title('Solution with the Line VW')
 
 exportgraphics(gcf, fullfile(out_dir, "06_solution_with_line.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "06_solution_with_line.fig"));
-
 
 %% postprocessing time vs. line resolution
 
@@ -279,7 +280,6 @@ title(['Convergence of the Line Integral with $n_{line}$ = ' num2str(n_line(end)
 
 exportgraphics(gcf, fullfile(out_dir, "08_convergence_line_integral.png"), "Resolution", 300);
 savefig(gcf, fullfile(out_dir, "08_convergence_line_integral.fig"));
-
 
 %% random points
 

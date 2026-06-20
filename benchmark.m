@@ -1,6 +1,7 @@
-clear
-close all
-clc
+% init
+clear; close all; clc
+t_start = tic;
+warning('off','all')
 
 %% user input
 
@@ -148,9 +149,17 @@ random_points = artificial_point_rand(mesh_points_snap, ...
 u_random = artificial_point_eval(mesh_points_snap, ...
     mesh_elements_snap, u_sol_snap, random_points);
 
-
+runtime = toc(t_start);
+fprintf('\nruntime: %.6f sec\n', runtime);
 
 %% Plots
+
+% output folder
+out_dir = "test_output";
+
+if ~exist(out_dir, "dir")
+    mkdir(out_dir);
+end
 
 %% model geometry with edge labels
 
@@ -158,6 +167,9 @@ figure(1)
 pdegplot(model_snap, 'EdgeLabels', 'on')
 xlabel('x'), ylabel('y')
 title('PDE Model Geometry')
+
+exportgraphics(gcf, fullfile(out_dir, "01_model_geometry.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "01_model_geometry.fig"));
 
 %% tractor mesh
 
@@ -175,13 +187,21 @@ axis equal
 legend([p1(1), p2(1), p3(1)], 'Mesh', 'Dirichlet Boundary', 'Von Neumann Boundary')
 title('Triangular Mesh')
 
+exportgraphics(gcf, fullfile(out_dir, "02_triangular_mesh.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "02_triangular_mesh.fig"));
+
 %% 3d FEM solution
 
 figure(3)
 pdeplot(model_snap, 'XYData', u_sol_snap, 'ZData', u_sol_snap)
+colormap(turbo)
+colorbar
 grid on
 xlabel('x'), ylabel('y'), zlabel('u')
 title('FEM Solution u')
+
+exportgraphics(gcf, fullfile(out_dir, "03_fem_solution_3d.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "03_fem_solution_3d.fig"));
 
 %% line points evaluation
 
@@ -190,6 +210,9 @@ plot(s_snap, u_line_snap, 'LineWidth', 2), grid on;
 xlabel('s'), ylabel('u')
 title('Function Evaluation along the Line')
 
+exportgraphics(gcf, fullfile(out_dir, "04_line_evaluation.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "04_line_evaluation.fig"));
+
 %% directional derivative along the line
 
 figure(5)
@@ -197,6 +220,8 @@ plot(s_snap, beta_grad_u_snap, 'LineWidth', 2), grid on;
 xlabel('s'), ylabel('\beta \cdot \nabla u')
 title('Directional Derivative along the Line')
 
+exportgraphics(gcf, fullfile(out_dir, "05_directional_derivative.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "05_directional_derivative.fig"));
 %% PDE solution with displayed line
 
 figure(6)
@@ -213,6 +238,9 @@ hold off
 xlabel('x'), ylabel('y')
 title('Solution with the Line VW')
 
+exportgraphics(gcf, fullfile(out_dir, "06_solution_with_line.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "06_solution_with_line.fig"));
+
 %% postprocessing time vs. line resolution
 
 figure(7)
@@ -227,6 +255,9 @@ xlabel('number of line points $n_{line}$', 'Interpreter', 'latex')
 ylabel('postprocessing time in s')
 legend(arrayfun(@(h) sprintf('h_{max} = 1/%d', round(1/h)), hmax, 'UniformOutput', false), 'Location', 'northwest')
 title('Postprocessing Time over Line Resolution')
+
+exportgraphics(gcf, fullfile(out_dir, "07_postprocessing_time.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "07_postprocessing_time.fig"));
 
 
 %% convergence of the line integral
@@ -247,6 +278,9 @@ xlabel('mesh size $h_{max}$', 'Interpreter', 'latex')
 ylabel('error of the line integral')
 legend(sprintf('\\int u ds  (order %.2f)', p_u(1)), 'Location', 'southeast')
 title(['Convergence of the Line Integral with $n_{line}$ = ' num2str(n_line(end))], 'Interpreter', 'latex')
+
+exportgraphics(gcf, fullfile(out_dir, "08_convergence_line_integral.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "08_convergence_line_integral.fig"));
 
 %% random points
 
@@ -284,3 +318,29 @@ hold off
 
 hrot = rotate3d(gcf);
 hrot.Enable = 'on';
+
+exportgraphics(gcf, fullfile(out_dir, "09_random_points.png"), "Resolution", 300);
+savefig(gcf, fullfile(out_dir, "09_random_points.fig"));
+
+%% print result tables
+
+fprintf('\n\n================ LINE INTEGRAL VALUES ================\n\n');
+
+% table for all line integral values
+line_integral_table = array2table(I_u, ...
+    'VariableNames', cellstr("n_line_" + string(n_line)), ...
+    'RowNames', cellstr("hmax_" + string(hmax)));
+
+disp(line_integral_table);
+
+
+fprintf('\n\n================ RANDOM POINT EVALUATION ================\n\n');
+
+% table for random point coordinates and evaluated values
+random_point_table = table( ...
+    random_points(:,1), ...
+    random_points(:,2), ...
+    u_random, ...
+    'VariableNames', {'x', 'y', 'u_value'});
+
+disp(random_point_table);
