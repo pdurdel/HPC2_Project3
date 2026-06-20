@@ -49,7 +49,7 @@ for i = 1:length(hmax)
     % e: edges
     % t: elements
     
-    [p, e, t, geom] = get_mesh_from_points(coords, coords_circles, big_radii, small_radii, hmax(i));
+    [p, e, t, geom] = get_geometry(coords, coords_circles, big_radii, small_radii, hmax(i));
     
 
     %% function handles
@@ -61,7 +61,7 @@ for i = 1:length(hmax)
 
     %% boundary conditions
     
-    [bdry_dirichlet_idx, bdry_neumann] = define_boundary_conditions(e);
+    [bdry_dirichlet_idx, bdry_dirichlet, bdry_neumann_idx, bdry_neumann] = define_boundary_conditions(e);
     
     
     %% solve Poisson problem
@@ -71,9 +71,8 @@ for i = 1:length(hmax)
     geometryFromEdges(model, geom);
     mesh = generateMesh(model, 'hmax', hmax(i), 'GeometricOrder', 'linear');
     
-    
-    applyBoundaryCondition(model, 'dirichlet', 'Edge', bdry_dirichlet_idx, 'u', u_D)
-    applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann(:, 1).', 'g', g)
+    applyBoundaryCondition(model, 'dirichlet', 'Edge', bdry_dirichlet_idx, 'u', u_D);
+    applyBoundaryCondition(model, 'neumann', 'Edge', bdry_neumann_idx, 'g', g);
     specifyCoefficients(model, m=0, d=0, c=1, a=0, f=f);
     
     u_sol_model = solvepde(model);
@@ -121,6 +120,8 @@ for i = 1:length(hmax)
             geom_snap = geom;
             p_snap = p;
             t_snap = t;
+            bdry_dirichlet_snap = bdry_dirichlet;
+            bdry_neumann_snap = bdry_neumann;
             model_snap = model;
             u_sol_snap = u_sol;
             s_snap = s;
@@ -161,10 +162,17 @@ title('PDE Model Geometry')
 %% tractor mesh
 
 figure(2)
-trisurf(t_snap, p_snap(:,1), p_snap(:,2), 0.*p_snap(:,2), ...
-    'edgecolor', 'k'), view(2)
+p1 = trisurf(t_snap, p_snap(:,1), p_snap(:,2), 0.*p_snap(:,2), ...
+    'edgecolor', 'k');
+hold on
+p2 = plot(reshape(p_snap(bdry_dirichlet_snap(:, 2:3),1),[],2)', ...
+reshape(p_snap(bdry_dirichlet_snap(:, 2:3),2),[],2)','b', 'LineWidth', 3);
+p3 = plot(reshape(p_snap(bdry_neumann_snap(:, 2:3),1),[],2)', ...
+reshape(p_snap(bdry_neumann_snap(:, 2:3),2),[],2)','r', 'LineWidth', 3);
+view(2)
 xlabel('x'), ylabel('y')
 axis equal
+legend([p1(1), p2(1), p3(1)], 'Mesh', 'Dirichlet Boundary', 'Von Neumann Boundary')
 title('Triangular Mesh')
 
 %% 3d FEM solution
