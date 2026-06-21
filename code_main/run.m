@@ -39,6 +39,7 @@ t_post = zeros(length(hmax), length(n_line));
 
 L = norm(W - V);
 I_u = zeros(length(hmax), length(n_line));
+mean_u_line = zeros(length(hmax), length(n_line));
 
 
 %% tractor shape mesh initialization
@@ -115,7 +116,7 @@ for i = 1:length(hmax)
         t_post(i, j) = toc(timer) / n_reps;
 
         % line integral (QoI for the convergence study)
-        I_u(i, j) = line_integral(s, u_line, L);
+        [I_u(i, j), mean_u_line(i, j)] = line_integral(s, u_line, L);
 
         % snapshot for the bottom plots
         if i == i_snap && j == j_snap
@@ -325,14 +326,40 @@ savefig(gcf, fullfile(out_dir, "09_random_points.fig"));
 
 %% print result tables
 
-fprintf('\n\n================ LINE INTEGRAL VALUES ================\n\n');
+fprintf('\n\n================ LINE INTEGRAL VALUES ================\n');
+fprintf('Format: line integral (line integral of the valid length)\n\n');
 
-% table for all line integral values
-line_integral_table = array2table(I_u, ...
-    'VariableNames', cellstr("n_line_" + string(n_line)), ...
-    'RowNames', cellstr("hmax_" + string(hmax)));
+% header
+fprintf('%12s', '');
+for j = 1:length(n_line)
+    fprintf('%28s', "n_line_" + string(n_line(j)));
+end
+fprintf('\n');
 
-disp(line_integral_table);
+% separator
+fprintf('%12s', '');
+for j = 1:length(n_line)
+    fprintf('%28s', repmat('-', 1, 24));
+end
+fprintf('\n');
+
+% rows
+for i = 1:length(hmax)
+
+    % row name
+    fprintf('%12s', "hmax_" + string(hmax(i)));
+
+    for j = 1:length(n_line)
+
+        % entry: line integral and normalized value
+        entry = sprintf('%.3f (%.3f)', I_u(i,j), mean_u_line(i,j));
+
+        fprintf('%28s', entry);
+
+    end
+
+    fprintf('\n');
+end
 
 
 fprintf('\n\n================ RANDOM POINT EVALUATION ================\n\n');
