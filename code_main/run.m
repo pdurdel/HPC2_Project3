@@ -185,7 +185,7 @@ reshape(p_snap(bdry_neumann_snap(:, 2:3),2),[],2)','r', 'LineWidth', 3);
 view(2)
 xlabel('x'), ylabel('y')
 axis equal
-legend([p1(1), p2(1), p3(1)], 'Mesh', 'Dirichlet Boundary', 'Von Neumann Boundary')
+legend([p1(1), p2(1), p3(1)], 'Mesh', 'Dirichlet Boundary', 'Neumann Boundary')
 title('Triangular Mesh')
 
 exportgraphics(gcf, fullfile(out_dir, "02_triangular_mesh.png"), "Resolution", 300);
