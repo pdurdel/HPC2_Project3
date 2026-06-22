@@ -10,35 +10,30 @@ addpath('functions')
 hmax = [1, 1/2, 1/4, 1/8, 1/16];
 
 % blue line VW
-
 V = [-2.0 -1.0];
 W = [3.0 1.0];
 
 n_line = [4, 8, 16, 32, 64, 128, 256, 512];
 
 % snapshot used for the plots
-
 hmax_snap = 1/4;
 n_line_snap = 512;
 i_snap = find(hmax == hmax_snap, 1);
 j_snap = find(n_line == n_line_snap, 1);
 
 % number of timing repetitions
-
 n_reps = 100;
 
 % number of random points to be evaluated
-
 n_rand = 20;
 
 % postprocessing time per (hmax, n_line)
-
 t_post = zeros(length(hmax), length(n_line));
 
 % line integrals (QoIs for the convergence study)
-
 L = norm(W - V);
 I_u = zeros(length(hmax), length(n_line));
+mean_u_line = zeros(length(hmax), length(n_line));
 
 
 %% tractor shape mesh initialization
@@ -116,7 +111,7 @@ for i = 1:length(hmax)
         t_post(i, j) = toc(timer) / n_reps;
 
         % line integral (QoI for the convergence study)
-        I_u(i, j) = line_integral(s, u_line, L);
+        [I_u(i, j), mean_u_line(i, j)] = line_integral(s, u_line, L);
 
         % snapshot for the bottom plots
         if i == i_snap && j == j_snap
@@ -326,14 +321,35 @@ savefig(gcf, fullfile(out_dir, "09_random_points.fig"));
 
 %% print result tables
 
-fprintf('\n\n================ LINE INTEGRAL VALUES ================\n\n');
+fprintf('\n\n================ LINE INTEGRAL VALUES ================\n');
+fprintf('Format: line integral (line integral of the valid length)\n\n');
 
-% table for all line integral values
-line_integral_table = array2table(I_u, ...
-    'VariableNames', cellstr("n_line_" + string(n_line)), ...
-    'RowNames', cellstr("hmax_" + string(hmax)));
+fprintf('%12s', '');
+for j = 1:length(n_line)
+    fprintf('%28s', "n_line_" + string(n_line(j)));
+end
+fprintf('\n');
 
-disp(line_integral_table);
+fprintf('%12s', '');
+for j = 1:length(n_line)
+    fprintf('%28s', repmat('-', 1, 24));
+end
+fprintf('\n');
+
+% rows
+for i = 1:length(hmax)
+
+    fprintf('%12s', "hmax_" + string(hmax(i)));
+
+    for j = 1:length(n_line)
+
+        entry = sprintf('%.3f (%.3f)', I_u(i,j), mean_u_line(i,j));
+        fprintf('%28s', entry);
+
+    end
+
+    fprintf('\n');
+end
 
 
 fprintf('\n\n================ RANDOM POINT EVALUATION ================\n\n');

@@ -1,5 +1,5 @@
 function vals = artificial_point_eval(points, elements, u, line_points)
-    % func vor artificial point evaluation of u on a arbitrary point
+    % func for artificial point evaluation of u on a arbitrary point
 
     % triangulationobject gets created
     obj_tr = triangulation(elements, points);
