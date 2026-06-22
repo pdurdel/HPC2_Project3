@@ -11,7 +11,7 @@ function rand_points = artificial_point_rand(points, elements, n_points)
         (p2(:,1)-p1(:,1)).*(p3(:,2)-p1(:,2)) - ...
         (p3(:,1)-p1(:,1)).*(p2(:,2)-p1(:,2)));
 
-    % cummulated sum
+    % cummulated sum of the areas
     cum_areas = cumsum(areas);
     total_area = cum_areas(end);
 

@@ -10,33 +10,27 @@ addpath('functions')
 hmax = [1, 1/2, 1/4, 1/8, 1/16];
 
 % blue line VW
-
 V = [-2.0 -1.0];
 W = [3.0 1.0];
 
 n_line = [4, 8, 16, 32, 64, 128, 256, 512];
 
 % snapshot used for the plots
-
 hmax_snap = 1/4;
 n_line_snap = 512;
 i_snap = find(hmax == hmax_snap, 1);
 j_snap = find(n_line == n_line_snap, 1);
 
 % number of timing repetitions
-
 n_reps = 100;
 
 % number of random points to be evaluated
-
 n_rand = 20;
 
 % postprocessing time per (hmax, n_line)
-
 t_post = zeros(length(hmax), length(n_line));
 
 % line integrals (QoIs for the convergence study)
-
 L = norm(W - V);
 I_u = zeros(length(hmax), length(n_line));
 mean_u_line = zeros(length(hmax), length(n_line));
@@ -329,14 +323,12 @@ savefig(gcf, fullfile(out_dir, "09_random_points.fig"));
 fprintf('\n\n================ LINE INTEGRAL VALUES ================\n');
 fprintf('Format: line integral (line integral of the valid length)\n\n');
 
-% header
 fprintf('%12s', '');
 for j = 1:length(n_line)
     fprintf('%28s', "n_line_" + string(n_line(j)));
 end
 fprintf('\n');
 
-% separator
 fprintf('%12s', '');
 for j = 1:length(n_line)
     fprintf('%28s', repmat('-', 1, 24));
@@ -346,14 +338,11 @@ fprintf('\n');
 % rows
 for i = 1:length(hmax)
 
-    % row name
     fprintf('%12s', "hmax_" + string(hmax(i)));
 
     for j = 1:length(n_line)
 
-        % entry: line integral and normalized value
         entry = sprintf('%.3f (%.3f)', I_u(i,j), mean_u_line(i,j));
-
         fprintf('%28s', entry);
 
     end
