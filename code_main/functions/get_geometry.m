@@ -8,7 +8,7 @@ geom_idx = 1;
 
 %% Fill the geometry matrix
 
-% Fill the straight lines from D' to L
+% Fill the straight lines from C' to L
 for i=4:num_coords-1
     geom(:,geom_idx) = [
         2
@@ -40,7 +40,7 @@ geom(:, geom_idx:geom_idx+1) = [
 ];
 geom_idx = geom_idx + 2;
 
-% Fill the circles connecting AB and CD'
+% Fill the circles connecting AB and CC'
 geom(:, geom_idx:geom_idx+1) = [
     1                       1
     coords(1, 1)            coords(3, 1)
