@@ -1,11 +1,11 @@
 function [bdry_dirichlet_idx, bdry_dirichlet, bdry_neumann_idx, bdry_neumann] = define_boundary_conditions(e)
-%% define dirichlet and neumann edge IDs
+%% Define dirichlet and neumann edge IDs
 
 bdry_dirichlet_idx = [5 12 14:17];
 bdry_neumann_idx = [1:4 6:11 13];
 bdry_idcs = {bdry_dirichlet_idx, bdry_neumann_idx};
 
-%% extract boundary edges via get_boundary.m
+%% Extract boundary edges via get_boundary.m
 
 bdry = get_boundary(e, bdry_idcs, 17);
 bdry_dirichlet = bdry{1};

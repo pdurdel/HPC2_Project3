@@ -1,5 +1,5 @@
 function [p,e,t,geom] = get_geometry(coords, coords_circles, big_radii, small_radii, hmax)
-%% allocate Memory for the geometry
+%% Allocate Memory for the geometry
 num_coords = 13;
 num_circles = 2;
 
