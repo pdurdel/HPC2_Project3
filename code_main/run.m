@@ -56,10 +56,11 @@ for i = 1:length(hmax)
 
     %% function handles
     
-    f = @(location, state) zeros(1, length(location.x));
-    g = @(location, state) zeros(1, length(location.x));
+    f = 0;
+    g = 0;
     u_D = @(location, state) u_dirichlet([location.x location.y], coords_circles(1, :), big_radii(1), coords(8, :), coords(9, :), 10^(-13));
     
+
 
     %% boundary conditions
     

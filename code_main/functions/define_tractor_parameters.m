@@ -1,9 +1,9 @@
 function [coords, coords_circles, big_radii, small_radii] = define_tractor_parameters()
 
 % This function returns parameters for a tractor shape. The parameters are
-% passed to get_mesh_from_points along hmax to initialize the mesh.
+% passed to get_geometry.m along hmax to initialize the mesh.
 
-%% outer point coordinate definitions
+%% point coordinate definitions
 
 coords = [
     (-13-3*sqrt(6))/2 3

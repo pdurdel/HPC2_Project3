@@ -1,22 +1,7 @@
 function [p,e,t,geom] = get_geometry(coords, coords_circles, big_radii, small_radii, hmax)
-%% Check for Parameters and allocate Memory for the geometry
+%% allocate Memory for the geometry
 num_coords = 13;
-if size(coords, 1) ~= num_coords
-    error('There are 13 point coordinates required.')
-end
-
 num_circles = 2;
-if size(coords_circles, 1) ~= num_circles
-    error('There are 2 circle coordinates required.')
-end
-
-if big_radii(1) <= small_radii(1)
-    error('Radius m is too large')
-end
-
-if big_radii(2) <= small_radii(2)
-    error('Radius n is too large')
-end
 
 geom = zeros(10, num_coords - 2 + 3 * num_circles);
 geom_idx = 1;
@@ -93,7 +78,9 @@ end
 
 [p,e,t] = initmesh(geom, 'hmax', hmax);
 
-t = t(1:3,:)';
 p = p';
+e = e([1:2 5:7], :)';
+t = t(1:3,:)';
+
 
 end

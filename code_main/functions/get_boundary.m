@@ -2,7 +2,7 @@ function bdry = get_boundary(e, bdry_idcs, num_boundaries)
 %% Set up the output
 
 % Find all boundary edges
-idx_bdry_edges = find( e(:, 6) == 0 | e(:, 7) == 0 );
+idx_bdry_edges = find( e(:, 4) == 0 | e(:, 5) == 0 );
 
 bdry_len = length(bdry_idcs);
 
@@ -28,13 +28,13 @@ end
 for i=1:length(idx_bdry_edges)
 
     edge = e(idx_bdry_edges(i), :);
-    edge_id = edge(5);
+    edge_id = edge(3);
     
     bdry_idx = edge_id_to_bdry(edge_id);
 
     % Check the orientation and save the edge going in mathematical
     % positive direction
-    if edge(6) == 1
+    if edge(4) == 1
         bdry{bdry_idx}(idcs(bdry_idx), :) = [edge_id edge(1) edge(2)];
     else
         bdry{bdry_idx}(idcs(bdry_idx), :) = [edge_id edge(2) edge(1)];
