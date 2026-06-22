@@ -7,10 +7,9 @@ idx_bdry_edges = find( e(:, 4) == 0 | e(:, 5) == 0 );
 bdry_len = length(bdry_idcs);
 
 bdry = cell(1, bdry_len);
-idcs = zeros(1, bdry_len);
+idcs = ones(1, bdry_len);
 for i=1:bdry_len
     bdry{i} = zeros(length(idx_bdry_edges), 3);
-    idcs(i) = 1;
 end
 
 % EdgeID-to-Boundary maps the Boundary index which is stored for each edge
